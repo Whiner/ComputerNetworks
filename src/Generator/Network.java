@@ -25,7 +25,7 @@ public class Network {
          return null;
     }
 
-    public boolean AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
+    public void AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
         if(Nodes.size() + 1 > MaxNodeCount)
             throw new Exception("Max Node counts");
         if(!CheckID(ParentNodeID))
@@ -34,15 +34,25 @@ public class Network {
 //            if(!CheckID(ConnectWith[i]))
 //                throw new Exception("Node with ID " + ConnectWith[i] + " are not exist in this network");
         Node t_Node = GetNodeByID(ParentNodeID);
-        //проверка на существование в том направлении узла
-        //связать все остальные
+        if(t_Node.GetNodeByDirection(direction) == null)
+            Nodes.add(new Node(Type, Nodes.get(Nodes.size() - 1).getID() + 1));
+        t_Node.ConnectNode(Nodes.get(Nodes.size() - 1), direction);
+
+        for (int t: ConnectWith){ // а еще все хуйня. надо переделывать как то
+            t_Node = GetNodeByID(t);
+           // if(t_Node != null)
+                //t_Node.ConnectNode();
+                // придумать че делать с направлениями. как определить где он находится в пространстве
+                // как вариант - сразу делать с X и Y как номерами ячеек на экране
+
+        }
 
 
-        return true;
+
     }
 
 
-    public int size(){
+    public int Size(){
         return Nodes.size();
     }
 

@@ -11,13 +11,22 @@ public class Node {
     private int Size;
     private int ID;
 
-    public void ConnectNode(Node node, Direction direction){
-        ConnectedNodes.add(new NodeNavigation(node, direction));
+    public void ConnectNode(Node node, Direction direction){ //connect with reverse
+        NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
+        if(!ConnectedNodes.contains(nodeNavigation))
+            ConnectedNodes.add(nodeNavigation);
+        if(!node.ConnectedNodes.contains(this))
+            node.ConnectedNodes.add(new NodeNavigation(this, direction.reverse()));
     }
     public boolean DeleteConnectedNode(Node node) {
         return ConnectedNodes.remove(node);
     }
-
+    public Node GetNodeByDirection(Direction direction){
+        for(NodeNavigation t: ConnectedNodes)
+            if(t.getDirection() == direction)
+                return t.getNode();
+        return null;
+    }
     public void CalculateSize(int FieldSizeInPixels, int LineSectionsCount) throws Exception {
         if(FieldSizeInPixels < 1 || LineSectionsCount < 1)
             throw new Exception("Incorrect value");
@@ -27,6 +36,11 @@ public class Node {
 
     public Node() {
         ConnectedNodes = new ArrayList<>();
+    }
+
+    public Node(NetworkType networkType, int ID) {
+        this.networkType = networkType;
+        this.ID = ID;
     }
 
     public Node(NetworkType networkType, List<NodeNavigation> connectedNodes, int coord_x, int coord_y, int size, int ID) throws Exception {
