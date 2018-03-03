@@ -2,6 +2,7 @@ package Generator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Network {
     private NetworkType Type;
@@ -26,7 +27,12 @@ public class Network {
     }
 
     public void AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
-        if(Nodes.size() + 1 > MaxNodeCount)
+        if(Nodes.isEmpty())
+        {
+            Nodes.add(new Node(Type, new Random().nextInt(Field.GetInstance().getCells_Count_X()), 0, 0));
+            return;
+        }
+        if(Nodes.size() + 1 > MaxNodeCount && MaxNodeCount != -1)
             throw new Exception("Max Node counts");
         if(!CheckID(ParentNodeID))
             throw new Exception("Node with ID " + ParentNodeID + " are not exist in this network");
@@ -37,9 +43,11 @@ public class Network {
         if(t_Node.GetNodeByDirection(direction) == null)
             Nodes.add(new Node(Type, Nodes.get(Nodes.size() - 1).getID() + 1));
         t_Node.ConnectNode(Nodes.get(Nodes.size() - 1), direction);
-
-        for (int t: ConnectWith){ // а еще все хуйня. надо переделывать как то
+        Node LastAdded = Nodes.get(Nodes.size() - 1);
+        for (int t: ConnectWith){ // 3 add null exc
             t_Node = GetNodeByID(t);
+            Direction t_direction = Direction.CheckDirection(LastAdded, t_Node);
+            LastAdded.ConnectNode(t_Node, t_direction);
            // if(t_Node != null)
                 //t_Node.ConnectNode();
                 // придумать че делать с направлениями. как определить где он находится в пространстве

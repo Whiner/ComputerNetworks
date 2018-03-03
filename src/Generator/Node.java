@@ -7,18 +7,39 @@ public class Node {
     private NetworkType networkType;
     private int RelationsCount;
     private List<NodeNavigation> ConnectedNodes;
-    private int Coord_X, Coord_Y;
+    private int CellNumber_X, CellNumber_Y;
     private int Size;
     private int ID;
 
+    public Node(NetworkType networkType, int cellNumber_X, int cellNumber_Y, int ID) {
+        this.networkType = networkType;
+        CellNumber_X = cellNumber_X;
+        CellNumber_Y = cellNumber_Y;
+        this.ID = ID;
+        ConnectedNodes = new ArrayList<>();
+    }
+
     public void ConnectNode(Node node, Direction direction){ //connect with reverse
         NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
+        if(node == null || this == null)
+            throw  new NullPointerException("Node is null pointer");
         if(!ConnectedNodes.contains(nodeNavigation))
+        {
             ConnectedNodes.add(nodeNavigation);
-        if(!node.ConnectedNodes.contains(this))
-            node.ConnectedNodes.add(new NodeNavigation(this, direction.reverse()));
+            RelationsCount++;
+        }
+        try{
+            if(!node.ConnectedNodes.contains(this))
+                node.ConnectedNodes.add(new NodeNavigation(this, direction.reverse()));
+            System.out.println("not null");
+        } catch(NullPointerException e){
+            System.out.println(e.getMessage());
+        }
+
+
     }
     public boolean DeleteConnectedNode(Node node) {
+        RelationsCount--;
         return ConnectedNodes.remove(node);
     }
     public Node GetNodeByDirection(Direction direction){
@@ -36,11 +57,14 @@ public class Node {
 
     public Node() {
         ConnectedNodes = new ArrayList<>();
+        RelationsCount = 0;
     }
 
     public Node(NetworkType networkType, int ID) {
+        this.ConnectedNodes = new ArrayList<>();
         this.networkType = networkType;
         this.ID = ID;
+        this.RelationsCount = 0;
     }
 
     public Node(NetworkType networkType, List<NodeNavigation> connectedNodes, int coord_x, int coord_y, int size, int ID) throws Exception {
@@ -49,8 +73,8 @@ public class Node {
             throw new NullPointerException("Connected Nodes list is NULL");
         RelationsCount = connectedNodes.size();
         ConnectedNodes = connectedNodes;
-        Coord_X = coord_x;
-        Coord_Y = coord_y;
+        CellNumber_X = coord_x;
+        CellNumber_Y = coord_y;
         if(size < 0)
             throw new Exception("Size must be greater than 0");
         Size = size;
@@ -94,19 +118,36 @@ public class Node {
         Size = size;
     }
 
-    public int getCoord_X() {
-        return Coord_X;
+    public int getCellNumber_X() {
+        return CellNumber_X;
     }
 
-    public void setCoord_X(int coord_X) {
-        Coord_X = coord_X;
+    public void setCellNumber_X(int cellNumber_X) {
+        CellNumber_X = cellNumber_X;
     }
 
-    public int getCoord_Y() {
-        return Coord_Y;
+    public int getCellNumber_Y() {
+        return CellNumber_Y;
     }
 
-    public void setCoord_Y(int coord_Y) {
-        Coord_Y = coord_Y;
+    public void setCellNumber_Y(int cellNumber_Y) {
+        CellNumber_Y = cellNumber_Y;
+    }
+    public boolean equals(Node node){
+        if(this == node)
+            return true;
+        if(this.CellNumber_X == node.CellNumber_X
+                && this.CellNumber_Y == node.CellNumber_Y)
+            return true;
+        else
+            return false;
+    }
+
+    public int getRelationsCount() {
+        return RelationsCount;
+    }
+
+    public void setRelationsCount(int relationsCount) {
+        RelationsCount = relationsCount;
     }
 }

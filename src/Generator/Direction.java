@@ -51,4 +51,34 @@ public enum Direction {
         }
     };
     public abstract Direction reverse();
+    public static Direction CheckDirection(Node from, Node to){
+        if(from.equals(to))
+            return null;
+        if (from.getCellNumber_X() > to.getCellNumber_X()
+                && from.getCellNumber_Y() == to.getCellNumber_Y())
+            return Right;
+        if (from.getCellNumber_X() > to.getCellNumber_X()
+                && from.getCellNumber_Y() < to.getCellNumber_Y())
+            return Right_Down;
+        if (from.getCellNumber_X() == to.getCellNumber_X()
+                && from.getCellNumber_Y() < to.getCellNumber_Y())
+            return Down;
+        if (from.getCellNumber_X() < to.getCellNumber_X()
+                && from.getCellNumber_Y() > to.getCellNumber_Y())
+            return Left_Down;
+        if (from.getCellNumber_X() < to.getCellNumber_X()
+                && from.getCellNumber_Y() == to.getCellNumber_Y())
+            return Left;
+        if (from.getCellNumber_X() < to.getCellNumber_X()
+                && from.getCellNumber_Y() < to.getCellNumber_Y())
+            return Up_Left;
+        if (from.getCellNumber_X() == to.getCellNumber_X()
+                && from.getCellNumber_Y() > to.getCellNumber_Y())
+            return Up;
+        if (from.getCellNumber_X() > to.getCellNumber_X()
+                && from.getCellNumber_Y() > to.getCellNumber_Y())
+            return Up_Right;
+
+        return null;
+    }
 }
