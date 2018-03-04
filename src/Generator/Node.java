@@ -19,18 +19,22 @@ public class Node {
         ConnectedNodes = new ArrayList<>();
     }
 
+
     public void ConnectNode(Node node, Direction direction){ //connect with reverse
-        NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
-        if(node == null || this == null)
+        if(node == null)
             throw  new NullPointerException("Node is null pointer");
-        if(!ConnectedNodes.contains(nodeNavigation))
+        NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
+        if(!ConnectedNodes.contains(nodeNavigation)) // сравнение сделать. происходит сравнение адресов
         {
             ConnectedNodes.add(nodeNavigation);
             RelationsCount++;
         }
         try{
             if(!node.ConnectedNodes.contains(this))
+            {
                 node.ConnectedNodes.add(new NodeNavigation(this, direction.reverse()));
+                node.RelationsCount++;
+            }
             System.out.println("not null");
         } catch(NullPointerException e){
             System.out.println(e.getMessage());
@@ -38,7 +42,7 @@ public class Node {
 
 
     }
-    public boolean DeleteConnectedNode(Node node) {
+    public boolean DeleteConnectedNode(Node node) { //by id сделать
         RelationsCount--;
         return ConnectedNodes.remove(node);
     }
@@ -136,11 +140,8 @@ public class Node {
     public boolean equals(Node node){
         if(this == node)
             return true;
-        if(this.CellNumber_X == node.CellNumber_X
-                && this.CellNumber_Y == node.CellNumber_Y)
-            return true;
-        else
-            return false;
+        return this.CellNumber_X == node.CellNumber_X
+                && this.CellNumber_Y == node.CellNumber_Y;
     }
 
     public int getRelationsCount() {

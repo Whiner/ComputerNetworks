@@ -29,9 +29,13 @@ public class Network {
     public void AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
         if(Nodes.isEmpty())
         {
-            Nodes.add(new Node(Type, new Random().nextInt(Field.GetInstance().getCells_Count_X()), 0, 0));
+            Nodes.add(new Node(Type,
+                    5/*new Random().nextInt(Field.GetInstance().getCells_Count_X())*/,
+                    0, 0));
             return;
         }
+        if(direction == Direction.None)
+            throw new Exception("Node must to have direction");
         if(Nodes.size() + 1 > MaxNodeCount && MaxNodeCount != -1)
             throw new Exception("Max Node counts");
         if(!CheckID(ParentNodeID))
@@ -39,13 +43,22 @@ public class Network {
 //        for (int i = 0; i < ConnectWith.length; i++)
 //            if(!CheckID(ConnectWith[i]))
 //                throw new Exception("Node with ID " + ConnectWith[i] + " are not exist in this network");
+
         Node t_Node = GetNodeByID(ParentNodeID);
         if(t_Node.GetNodeByDirection(direction) == null)
-            Nodes.add(new Node(Type, Nodes.get(Nodes.size() - 1).getID() + 1));
+        {
+            int Cell_X = Direction.Check_X_by_Direction(t_Node, direction);
+            if(Cell_X < 0)
+                throw new Exception("Out from field borders. Horizontal cell index less 0");
+            int Cell_Y =  Direction.Check_Y_by_Direction(t_Node, direction);
+            if(Cell_Y < 0)
+                throw new Exception("Out from field borders. Vertical cell index less 0");
+            Nodes.add(new Node(Type, Cell_X, Cell_Y, Nodes.get(Nodes.size() - 1).getID() + 1));
+        }
         t_Node.ConnectNode(Nodes.get(Nodes.size() - 1), direction);
         Node LastAdded = Nodes.get(Nodes.size() - 1);
         for (int t: ConnectWith){ // 3 add null exc
-            t_Node = GetNodeByID(t);
+            t_Node = GetNodeByID(t); //проверки на существование
             Direction t_direction = Direction.CheckDirection(LastAdded, t_Node);
             LastAdded.ConnectNode(t_Node, t_direction);
            // if(t_Node != null)
