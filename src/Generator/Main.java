@@ -6,7 +6,7 @@ import java.util.Random;
 
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Network network = new Network();
 
         Field.GetInstance().setCells_Count_X(10);
@@ -15,12 +15,18 @@ public class Main {
         Field.GetInstance().setSizeFieldInPx_Y(100);
 
         network.setType(NetworkType.WAN);
+        network.setMaxNodeCount(5);
+        try {
+            network.CreateParentNode(3, 2);
+            network.AddNode(Direction.Down, 0); // id 1
+            network.AddNode(Direction.Up_Right, 1); // id 2
+            network.AddNode(Direction.Down, 2,1, 2); // id 3
+            network.AddNode(Direction.Up_Right, 3,0); // id 4
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
-        network.AddNode(Direction.None, 0);//id 0
-        network.AddNode(Direction.Left_Down, 0); // id 1
-        network.AddNode(Direction.Right, 1, 0); // id 2
-        network.AddNode(Direction.Down, 2,1, 2); // id 3
-        network.AddNode(Direction.Up_Right, 3,0); // id 4
 
         List<Node> nodes = network.getNodes();
         for(Node t: nodes){

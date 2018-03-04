@@ -4,6 +4,19 @@ public class NodeNavigation {
     private Node node;
     private Direction direction;
 
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean equal = false;
+        if (object != null && object instanceof NodeNavigation)
+        {
+            equal = (this.direction == ((NodeNavigation) object).direction) &&
+            node.equals(((NodeNavigation) object).node);
+        }
+
+        return equal;
+    }
+
     public NodeNavigation(Node node, Direction direction) {
         this.node = node;
         this.direction = direction;

@@ -80,7 +80,7 @@ public enum Direction {
                 && from.getCellNumber_Y() > to.getCellNumber_Y())
             return Up_Left;
         if (from.getCellNumber_X() == to.getCellNumber_X()
-                && from.getCellNumber_Y() < to.getCellNumber_Y())
+                && from.getCellNumber_Y() > to.getCellNumber_Y())
             return Up;
         if (from.getCellNumber_X() < to.getCellNumber_X()
                 && from.getCellNumber_Y() > to.getCellNumber_Y())

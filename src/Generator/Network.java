@@ -2,12 +2,16 @@ package Generator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 
 public class Network {
     private NetworkType Type;
     private List<Node> Nodes;
     private int MaxNodeCount;
+
+    public void setMaxNodeCount(int maxNodeCount) {
+        MaxNodeCount = maxNodeCount;
+    }
 
     public boolean CheckID(int ID){
         boolean entered = false;
@@ -26,46 +30,53 @@ public class Network {
          return null;
     }
 
+    public void CreateParentNode(int CellNumber_X, int CellNumber_Y) throws Exception {
+        if(!Nodes.isEmpty())
+            throw new Exception("Parent Node is already exist");
+        if(CellNumber_X < 0 || CellNumber_Y < 0
+                || CellNumber_X >= Field.GetInstance().getCells_Count_X()
+                || CellNumber_Y >= Field.GetInstance().getCells_Count_Y())
+            throw new Exception("Out from field borders. X = " + CellNumber_X + " Y = " + CellNumber_Y);
+        Nodes.add(new Node(Type, CellNumber_X, CellNumber_Y, 0));
+
+    }
     public void AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
         if(Nodes.isEmpty())
-        {
-            Nodes.add(new Node(Type,
-                    5/*new Random().nextInt(Field.GetInstance().getCells_Count_X())*/,
-                    0, 0));
-            return;
-        }
+            throw new Exception("You must create parent node firstly");
         if(direction == Direction.None)
-            throw new Exception("Node must to have direction");
+            throw new Exception("Node must have direction");
         if(Nodes.size() + 1 > MaxNodeCount && MaxNodeCount != -1)
             throw new Exception("Max Node counts");
         if(!CheckID(ParentNodeID))
             throw new Exception("Node with ID " + ParentNodeID + " are not exist in this network");
-//        for (int i = 0; i < ConnectWith.length; i++)
-//            if(!CheckID(ConnectWith[i]))
-//                throw new Exception("Node with ID " + ConnectWith[i] + " are not exist in this network");
 
-        Node t_Node = GetNodeByID(ParentNodeID);
-        if(t_Node.GetNodeByDirection(direction) == null)
+        Node ParentNode = GetNodeByID(ParentNodeID);
+        int ID;
+        Node Node_By_Direction = ParentNode.GetNodeByDirection(direction);
+        if(Node_By_Direction == null)
         {
-            int Cell_X = Direction.Check_X_by_Direction(t_Node, direction);
-            if(Cell_X < 0)
-                throw new Exception("Out from field borders. Horizontal cell index less 0");
-            int Cell_Y =  Direction.Check_Y_by_Direction(t_Node, direction);
-            if(Cell_Y < 0)
-                throw new Exception("Out from field borders. Vertical cell index less 0");
-            Nodes.add(new Node(Type, Cell_X, Cell_Y, Nodes.get(Nodes.size() - 1).getID() + 1));
+            int Cell_X = Direction.Check_X_by_Direction(ParentNode, direction);
+            if(Cell_X < 0 || Cell_X >= Field.GetInstance().getCells_Count_X())
+                throw new Exception("Out from field borders. Horizontal cell index is " + Cell_X);
+            int Cell_Y = Direction.Check_Y_by_Direction(ParentNode, direction);
+            if(Cell_Y < 0 || Cell_Y >= Field.GetInstance().getCells_Count_Y())
+                throw new Exception("Out from field borders. Vertical cell index is " + Cell_Y);
+            ID = Nodes.get(Nodes.size() - 1).getID() + 1;
+            Nodes.add(new Node(Type, Cell_X, Cell_Y, ID));
         }
-        t_Node.ConnectNode(Nodes.get(Nodes.size() - 1), direction);
-        Node LastAdded = Nodes.get(Nodes.size() - 1);
-        for (int t: ConnectWith){ // 3 add null exc
-            t_Node = GetNodeByID(t); //проверки на существование
-            Direction t_direction = Direction.CheckDirection(LastAdded, t_Node);
-            LastAdded.ConnectNode(t_Node, t_direction);
-           // if(t_Node != null)
-                //t_Node.ConnectNode();
-                // придумать че делать с направлениями. как определить где он находится в пространстве
-                // как вариант - сразу делать с X и Y как номерами ячеек на экране
+        else
+            ID = Node_By_Direction.getID();
 
+        Node LastAdded = Nodes.get(ID);
+        ParentNode.ConnectNode(LastAdded, direction);
+
+        for (int t: ConnectWith){
+            Node ConnectingNode = GetNodeByID(t);
+            if(ConnectingNode != null){
+                Direction t_direction = Direction.CheckDirection(LastAdded, ConnectingNode);
+                if(t_direction != null)
+                    LastAdded.ConnectNode(ConnectingNode, t_direction);
+            }
         }
 
 

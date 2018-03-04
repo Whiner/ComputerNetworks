@@ -8,8 +8,10 @@ public class Node {
     private int RelationsCount;
     private List<NodeNavigation> ConnectedNodes;
     private int CellNumber_X, CellNumber_Y;
+    private int MaxRelationsCount;
     private int Size;
     private int ID;
+
 
     public Node(NetworkType networkType, int cellNumber_X, int cellNumber_Y, int ID) {
         this.networkType = networkType;
@@ -17,34 +19,45 @@ public class Node {
         CellNumber_Y = cellNumber_Y;
         this.ID = ID;
         ConnectedNodes = new ArrayList<>();
+        MaxRelationsCount = -1;
+        RelationsCount = 0;
     }
 
 
-    public void ConnectNode(Node node, Direction direction){ //connect with reverse
+    public void ConnectNode(Node node, Direction direction) throws Exception {
         if(node == null)
-            throw  new NullPointerException("Node is null pointer");
+            throw new NullPointerException("Node is null pointer");
+        if(node.equals(this))
+            throw new Exception("Comparison of oneself node");
+        if(this.MaxRelationsCount < RelationsCount && this.MaxRelationsCount != -1
+                || node.MaxRelationsCount < node.RelationsCount && node.MaxRelationsCount != -1)
+            throw new Exception("Max relations count");
         NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
-        if(!ConnectedNodes.contains(nodeNavigation)) // сравнение сделать. происходит сравнение адресов
+        if(!ConnectedNodes.contains(nodeNavigation))
         {
             ConnectedNodes.add(nodeNavigation);
             RelationsCount++;
         }
-        try{
-            if(!node.ConnectedNodes.contains(this))
-            {
-                node.ConnectedNodes.add(new NodeNavigation(this, direction.reverse()));
-                node.RelationsCount++;
-            }
-            System.out.println("not null");
-        } catch(NullPointerException e){
-            System.out.println(e.getMessage());
+        //try{
+        nodeNavigation = new NodeNavigation(this, direction.reverse());
+        if(!node.ConnectedNodes.contains(nodeNavigation))
+        {
+            node.ConnectedNodes.add(nodeNavigation);
+            node.RelationsCount++;
         }
+            //System.out.println("not null");
+        //} catch(NullPointerException e){
+           // System.out.println(e.getMessage());
+        //}
 
 
     }
-    public boolean DeleteConnectedNode(Node node) { //by id сделать
+    public boolean DeleteConnectedNode(int ID) {
         RelationsCount--;
-        return ConnectedNodes.remove(node);
+        for(NodeNavigation t: ConnectedNodes)
+            if(t.getNode().getID() == ID)
+                return ConnectedNodes.remove(t);
+        return false;
     }
     public Node GetNodeByDirection(Direction direction){
         for(NodeNavigation t: ConnectedNodes)
@@ -62,6 +75,7 @@ public class Node {
     public Node() {
         ConnectedNodes = new ArrayList<>();
         RelationsCount = 0;
+        MaxRelationsCount = -1;
     }
 
     public Node(NetworkType networkType, int ID) {
@@ -69,6 +83,7 @@ public class Node {
         this.networkType = networkType;
         this.ID = ID;
         this.RelationsCount = 0;
+        MaxRelationsCount = -1;
     }
 
     public Node(NetworkType networkType, List<NodeNavigation> connectedNodes, int coord_x, int coord_y, int size, int ID) throws Exception {
@@ -83,6 +98,7 @@ public class Node {
             throw new Exception("Size must be greater than 0");
         Size = size;
         this.ID = ID;
+        MaxRelationsCount = -1;
     }
 
     public int getID() {
@@ -105,12 +121,6 @@ public class Node {
         return ConnectedNodes;
     }
 
-    public void setConnectedNodes(List<NodeNavigation> connectedNodes) {
-        if(connectedNodes == null)
-            throw new NullPointerException("Connected Nodes list is NULL");
-        ConnectedNodes = connectedNodes;
-        RelationsCount = connectedNodes.size();
-    }
 
     public int getSize() {
         return Size;
@@ -137,18 +147,33 @@ public class Node {
     public void setCellNumber_Y(int cellNumber_Y) {
         CellNumber_Y = cellNumber_Y;
     }
-    public boolean equals(Node node){
+
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean equal = false;
+        if (object != null && object instanceof Node)
+            equal = this.CellNumber_X == ((Node)object).CellNumber_X
+            && this.CellNumber_Y == ((Node)object).CellNumber_Y && this.ID == ((Node)object).ID;
+        return equal;
+    }
+
+    /*public boolean equals(Node node){  //override сделать
         if(this == node)
             return true;
         return this.CellNumber_X == node.CellNumber_X
-                && this.CellNumber_Y == node.CellNumber_Y;
-    }
+                && this.CellNumber_Y == node.CellNumber_Y && this.ID == node.ID;
+    }*/
 
     public int getRelationsCount() {
         return RelationsCount;
     }
 
-    public void setRelationsCount(int relationsCount) {
-        RelationsCount = relationsCount;
+    public int getMaxRelationsCount() {
+        return MaxRelationsCount;
+    }
+
+    public void setMaxRelationsCount(int maxRelationsCount) {
+        MaxRelationsCount = maxRelationsCount;
     }
 }
