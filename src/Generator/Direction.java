@@ -1,5 +1,7 @@
 package Generator;
 
+import java.util.Random;
+
 public enum Direction {
 
     None{
@@ -57,7 +59,9 @@ public enum Direction {
         }
     };
     public abstract Direction reverse();
-
+    public static Direction RandomDirection(){
+        return Direction.values()[new Random().nextInt(8) + 1];
+    }
     public static Direction CheckDirection(Node from, Node to){
         if(from.equals(to))
             return None;

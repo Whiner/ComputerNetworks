@@ -26,12 +26,12 @@ public class Node {
 
     public void ConnectNode(Node node, Direction direction) throws Exception {
         if(node == null)
-            throw new NullPointerException("Node is null pointer");
+            throw new GeneratorException("Node is null pointer", 200);
         if(node.equals(this))
-            throw new Exception("Comparison of oneself node");
+            throw new GeneratorException("Comparison of oneself node", 201);
         if(this.MaxRelationsCount < RelationsCount && this.MaxRelationsCount != -1
                 || node.MaxRelationsCount < node.RelationsCount && node.MaxRelationsCount != -1)
-            throw new Exception("Max relations count");
+            throw new GeneratorException("Max relations count", 202);
         NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
         if(!ConnectedNodes.contains(nodeNavigation))
         {
@@ -67,7 +67,7 @@ public class Node {
     }
     public void CalculateSize(int FieldSizeInPixels, int LineSectionsCount) throws Exception {
         if(FieldSizeInPixels < 1 || LineSectionsCount < 1)
-            throw new Exception("Incorrect value");
+            throw new GeneratorException("Incorrect value", 203);
         else
             Size = FieldSizeInPixels / LineSectionsCount;
     }
@@ -89,13 +89,13 @@ public class Node {
     public Node(NetworkType networkType, List<NodeNavigation> connectedNodes, int coord_x, int coord_y, int size, int ID) throws Exception {
         this.networkType = networkType;
         if(connectedNodes == null)
-            throw new NullPointerException("Connected Nodes list is NULL");
+            throw new GeneratorException("Connected Nodes list is NULL", 205);
         RelationsCount = connectedNodes.size();
         ConnectedNodes = connectedNodes;
         CellNumber_X = coord_x;
         CellNumber_Y = coord_y;
         if(size < 0)
-            throw new Exception("Size must be greater than 0");
+            throw new GeneratorException("Size must be greater than 0", 206);
         Size = size;
         this.ID = ID;
         MaxRelationsCount = -1;
@@ -128,7 +128,7 @@ public class Node {
 
     public void setSize(int size) throws Exception {
         if(size < 0)
-            throw new Exception("Size must be greater than 0");
+            throw new GeneratorException("Size must be greater than 0", 206);
         Size = size;
     }
 
@@ -157,13 +157,6 @@ public class Node {
             && this.CellNumber_Y == ((Node)object).CellNumber_Y && this.ID == ((Node)object).ID;
         return equal;
     }
-
-    /*public boolean equals(Node node){  //override сделать
-        if(this == node)
-            return true;
-        return this.CellNumber_X == node.CellNumber_X
-                && this.CellNumber_Y == node.CellNumber_Y && this.ID == node.ID;
-    }*/
 
     public int getRelationsCount() {
         return RelationsCount;

@@ -9,6 +9,11 @@ public class Network {
     private List<Node> Nodes;
     private int MaxNodeCount;
 
+    public void setMaxNodeRelations(int maxNodeRelations){
+        for(Node t: Nodes){
+            t.setMaxRelationsCount(maxNodeRelations);
+        }
+    }
     public void setMaxNodeCount(int maxNodeCount) {
         MaxNodeCount = maxNodeCount;
     }
@@ -32,24 +37,24 @@ public class Network {
 
     public void CreateParentNode(int CellNumber_X, int CellNumber_Y) throws Exception {
         if(!Nodes.isEmpty())
-            throw new Exception("Parent Node is already exist");
+            throw new GeneratorException("Parent Node is already exist", 100);
         if(CellNumber_X < 0 || CellNumber_Y < 0
                 || CellNumber_X >= Field.GetInstance().getCells_Count_X()
                 || CellNumber_Y >= Field.GetInstance().getCells_Count_Y())
-            throw new Exception("Out from field borders. X = " + CellNumber_X + " Y = " + CellNumber_Y);
+            throw new GeneratorException("Out from field borders. X = " + CellNumber_X + " Y = " + CellNumber_Y, 101);
         Nodes.add(new Node(Type, CellNumber_X, CellNumber_Y, 0));
 
     }
-    public void AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
+    public boolean AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
         if(Nodes.isEmpty())
-            throw new Exception("You must create parent node firstly");
+            throw new GeneratorException("You must create parent node firstly", 102);
         if(direction == Direction.None)
-            throw new Exception("Node must have direction");
+            throw new GeneratorException("Node must have direction", 103);
         if(Nodes.size() + 1 > MaxNodeCount && MaxNodeCount != -1)
-            throw new Exception("Max Node counts");
+            throw new GeneratorException("Max node counts", 104);
         if(!CheckID(ParentNodeID))
-            throw new Exception("Node with ID " + ParentNodeID + " are not exist in this network");
-
+            throw new GeneratorException("Node with ID " + ParentNodeID + " are not exist in this network", 105);
+        boolean NewNode = true;
         Node ParentNode = GetNodeByID(ParentNodeID);
         int ID;
         Node Node_By_Direction = ParentNode.GetNodeByDirection(direction);
@@ -57,15 +62,18 @@ public class Network {
         {
             int Cell_X = Direction.Check_X_by_Direction(ParentNode, direction);
             if(Cell_X < 0 || Cell_X >= Field.GetInstance().getCells_Count_X())
-                throw new Exception("Out from field borders. Horizontal cell index is " + Cell_X);
+                throw new GeneratorException("Out from field borders. Horizontal cell index is " + Cell_X, 106);
             int Cell_Y = Direction.Check_Y_by_Direction(ParentNode, direction);
             if(Cell_Y < 0 || Cell_Y >= Field.GetInstance().getCells_Count_Y())
-                throw new Exception("Out from field borders. Vertical cell index is " + Cell_Y);
+                throw new GeneratorException("Out from field borders. Vertical cell index is " + Cell_Y, 106);
             ID = Nodes.get(Nodes.size() - 1).getID() + 1;
             Nodes.add(new Node(Type, Cell_X, Cell_Y, ID));
         }
         else
+        {
             ID = Node_By_Direction.getID();
+            NewNode = false;
+        }
 
         Node LastAdded = Nodes.get(ID);
         ParentNode.ConnectNode(LastAdded, direction);
@@ -80,7 +88,7 @@ public class Network {
         }
 
 
-
+        return NewNode;
     }
 
 
