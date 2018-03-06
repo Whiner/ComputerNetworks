@@ -6,17 +6,13 @@ import java.util.Random;
 import java.util.logging.FileHandler;
 
 public class TopologyGenerator {
-    private List<Network> networks;
-    private boolean WAN;
-    private int LAN;
 
-    public void GenerateWAN(int MaxNodeCount, int MaxNodeRelationsCount) throws Exception {
+    public static void GenerateWAN(Topology topology, int MaxNodeCount, int MaxNodeRelationsCount) throws Exception {
         if(MaxNodeCount <= 0)
             throw new GeneratorException("Max node count must be greater 0", 300);
         if(MaxNodeRelationsCount <= 0 || MaxNodeRelationsCount > 5)
             throw new GeneratorException("Max node relations count must be greater 0 and less 5", 301);
 
-        WAN = true;
         Network added_network = new Network(NetworkType.WAN, MaxNodeCount);
 
         Random r = new Random();
@@ -34,13 +30,14 @@ public class TopologyGenerator {
             Direction t_direction = Direction.RandomDirection();
             int ParentID = r.nextInt(i + 1);
             List<Integer> ConnectID = new ArrayList<>();
-            int RandomConnectNode;
-            for (int j = 0; j < ConnectCount; j++){
-                do {
-                    RandomConnectNode = r.nextInt(i + 1); // err
-                } while(RandomConnectNode== ParentID || ConnectID.contains(RandomConnectNode));
-                ConnectID.add(RandomConnectNode);
-            }
+            int RandomConnectNode = 0;
+            if(i != 0)
+                for (int j = 0; j < ConnectCount; j++) {
+                    do {
+                        RandomConnectNode = r.nextInt(i + 1); // err
+                    } while (RandomConnectNode == ParentID || ConnectID.contains(RandomConnectNode));
+                }
+            ConnectID.add(RandomConnectNode);
             try {
                 switch (ConnectCount) {
                     case 0:
@@ -79,8 +76,9 @@ public class TopologyGenerator {
             }
         }
 
-        networks.add(added_network);
         added_network.setMaxNodeRelations(MaxNodeRelationsCount);
+        topology.AddNetwork(added_network);
+
 
     }
 }
