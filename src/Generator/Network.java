@@ -39,8 +39,8 @@ public class Network {
         if(!Nodes.isEmpty())
             throw new GeneratorException("Parent Node is already exist", 100);
         if(CellNumber_X < 0 || CellNumber_Y < 0
-                || CellNumber_X >= Field.GetInstance().getCells_Count_X()
-                || CellNumber_Y >= Field.GetInstance().getCells_Count_Y())
+                || CellNumber_X >= Field.GetInstance().getCells_Count()
+                || CellNumber_Y >= Field.GetInstance().getCells_Count())
             throw new GeneratorException("Out from field borders. X = " + CellNumber_X + " Y = " + CellNumber_Y, 101);
         Nodes.add(new Node(Type, CellNumber_X, CellNumber_Y, 0));
 
@@ -61,10 +61,10 @@ public class Network {
         if(Node_By_Direction == null)
         {
             int Cell_X = Direction.Check_X_by_Direction(ParentNode, direction);
-            if(Cell_X < 0 || Cell_X >= Field.GetInstance().getCells_Count_X())
+            if(Cell_X < 0 || Cell_X >= Field.GetInstance().getCells_Count())
                 throw new GeneratorException("Out from field borders. Horizontal cell index is " + Cell_X, 106);
             int Cell_Y = Direction.Check_Y_by_Direction(ParentNode, direction);
-            if(Cell_Y < 0 || Cell_Y >= Field.GetInstance().getCells_Count_Y())
+            if(Cell_Y < 0 || Cell_Y >= Field.GetInstance().getCells_Count())
                 throw new GeneratorException("Out from field borders. Vertical cell index is " + Cell_Y, 106);
             ID = Nodes.get(Nodes.size() - 1).getID() + 1;
             Nodes.add(new Node(Type, Cell_X, Cell_Y, ID));

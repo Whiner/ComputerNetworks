@@ -3,7 +3,7 @@ package Generator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.FileHandler;
+
 
 public class TopologyGenerator {
 
@@ -18,8 +18,8 @@ public class TopologyGenerator {
         Random r = new Random();
         try {
             added_network.CreateParentNode(
-                    Field.GetInstance().getCells_Count_X() / 4
-                            + r.nextInt(Field.GetInstance().getCells_Count_X() / 2),
+                    Field.GetInstance().getCells_Count() / 4
+                            + r.nextInt(Field.GetInstance().getCells_Count() / 2),
                     0);
         }catch (Exception e){
             throw new GeneratorException("Generate falled with message: \n" + e.getMessage(), 303);
@@ -80,5 +80,9 @@ public class TopologyGenerator {
         topology.AddNetwork(added_network);
 
 
+    }
+
+    public static void GenerateLAN(Topology topology,  int MaxNodeCount, int MaxNodeRelationsCount, int RelationsWithWAN){
+        //TODO
     }
 }

@@ -1,5 +1,6 @@
 package Generator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,10 +10,9 @@ public class Main {
     public static void main(String[] args) {
 
 
-        Field.GetInstance().setCells_Count_X(10);
-        Field.GetInstance().setCells_Count_Y(10);
-        Field.GetInstance().setSizeFieldInPx_X(100);
-        Field.GetInstance().setSizeFieldInPx_Y(100);
+        Field.GetInstance().setCells_Count(10);
+        Field.GetInstance().setSizeBorderInPx(1000);
+
         Topology t = new Topology();
 
         try {
@@ -23,7 +23,7 @@ public class Main {
             e.printStackTrace();
         }
         List<Network> networks = t.getNetworks();
-        for (Network _t: networks){
+       /* for (Network _t: networks){
             System.out.println("Сеть " + _t.getType());
             List<Node> nodes = _t.getNodes();
             for (Node _tt: nodes){
@@ -35,6 +35,7 @@ public class Main {
                 System.out.println();
             }
 
-        }
+        }*/
+
     }
 }
