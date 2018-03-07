@@ -25,19 +25,26 @@ public class TopologyGenerator {
             throw new GeneratorException("Generate falled with message: \n" + e.getMessage(), 303);
         }
 
-        for (int i = 0; i < MaxNodeCount - 1; i++){ //err
-            int ConnectCount = r.nextInt(MaxNodeRelationsCount - 1);
+        for (int i = 0; i < MaxNodeCount - 1; i++){
+            int ConnectCount;
+            if (i == 0)
+                ConnectCount = 0;
+            else
+                ConnectCount = r.nextInt(MaxNodeRelationsCount - 1);
             Direction t_direction = Direction.RandomDirection();
             int ParentID = r.nextInt(i + 1);
-            List<Integer> ConnectID = new ArrayList<>();
+            List<Integer> ConnectID = new ArrayList<>(); //с какими соединить еще
             int RandomConnectNode = 0;
             if(i != 0)
+            {
                 for (int j = 0; j < ConnectCount; j++) {
                     do {
-                        RandomConnectNode = r.nextInt(i + 1); // err
+                        RandomConnectNode = r.nextInt(i + 1);
                     } while (RandomConnectNode == ParentID || ConnectID.contains(RandomConnectNode));
                 }
-            ConnectID.add(RandomConnectNode);
+                ConnectID.add(RandomConnectNode);
+            }
+
             try {
                 switch (ConnectCount) {
                     case 0:

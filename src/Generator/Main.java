@@ -12,7 +12,7 @@ public class Main {
 
         Field.GetInstance().setCells_Count(10);
         Field.GetInstance().setSizeBorderInPx(1000);
-
+        Field.GetInstance().setLAN_Field_Count(2);
         Topology t = new Topology();
 
         try {

@@ -2,11 +2,39 @@ package Generator;
 
 public class Field {
 
-
     private int NodeSize;
     private int Cells_Count;
     private int SizeBorderInPx;
 
+    private int LAN_Field_Count;
+    private int LAN_Field_Width;
+
+    private int WAN_Field_Height;
+
+    public int getLAN_Field_Count() {
+        return LAN_Field_Count;
+    }
+
+    public void setLAN_Field_Count(int LAN_Field_Count) {
+        this.LAN_Field_Count = LAN_Field_Count;
+        try {
+            LAN_Width_Calc();
+            WAN_Height_Calc();
+        }
+        catch (Exception e){
+
+        }
+    }
+
+
+
+
+    private void LAN_Width_Calc(){
+        LAN_Field_Width = SizeBorderInPx / LAN_Field_Count;
+    }
+    private void WAN_Height_Calc(){
+        WAN_Field_Height = SizeBorderInPx / 2;
+    }
 
     public int getCells_Count() {
         return Cells_Count;
