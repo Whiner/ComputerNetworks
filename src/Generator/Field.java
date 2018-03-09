@@ -1,40 +1,58 @@
 package Generator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Field {
 
     private int NodeSize;
     private int Cells_Count;
     private int SizeBorderInPx;
 
-    private int LAN_Field_Count;
-    private int LAN_Field_Width;
-
-    private int WAN_Field_Height;
+    private Section WAN_Section;
+    private List<Section> LAN_Sections;
+    private int MaxSectionsCount;
 
     public int getLAN_Field_Count() {
-        return LAN_Field_Count;
+        return LAN_Sections.size();
     }
 
-    public void setLAN_Field_Count(int LAN_Field_Count) {
-        this.LAN_Field_Count = LAN_Field_Count;
-        try {
-            LAN_Width_Calc();
-            WAN_Height_Calc();
-        }
-        catch (Exception e){
+    public Section getWAN_Section() {
+        return WAN_Section;
+    }
 
-        }
+    public List<Section> getLAN_Sections() {
+        return LAN_Sections;
+    }
+
+    public int getMaxSectionsCount() {
+        return MaxSectionsCount;
+    }
+
+    public boolean AddWAN_Section(){
+        if(WAN_Section != null)
+            return false;
+        WAN_Section = new Section("", NetworkType.WAN, 0, 0, SizeBorderInPx, SizeBorderInPx / 2,
+                Cells_Count, Cells_Count / 2);
+        return true;
+    }
+    public boolean AddLAN_Section(){
+        if(LAN_Sections == null)
+            LAN_Sections = new ArrayList<>();
+        if(LAN_Sections.size() >= MaxSectionsCount)
+            return false;
+        LAN_Sections.add(new Section("" + LAN_Sections.size() + 1,
+                NetworkType.LAN,
+                SizeBorderInPx - SizeBorderInPx / (LAN_Sections.size() + 1),
+                SizeBorderInPx / 2,
+                SizeBorderInPx / (LAN_Sections.size() + 1),
+                SizeBorderInPx / 2,
+                Cells_Count / (LAN_Sections.size() + 1),
+                Cells_Count / 2));
+        return true;
     }
 
 
-
-
-    private void LAN_Width_Calc(){
-        LAN_Field_Width = SizeBorderInPx / LAN_Field_Count;
-    }
-    private void WAN_Height_Calc(){
-        WAN_Field_Height = SizeBorderInPx / 2;
-    }
 
     public int getCells_Count() {
         return Cells_Count;

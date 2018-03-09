@@ -24,7 +24,7 @@ public class Node {
     }
 
 
-    public void ConnectNode(Node node, Direction direction) throws Exception {
+    public void ConnectNode(Node node, Direction direction) throws GeneratorException {
         if(node == null)
             throw new GeneratorException("Node is null pointer", 200);
         if(node.equals(this))

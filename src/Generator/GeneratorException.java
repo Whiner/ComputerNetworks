@@ -15,4 +15,8 @@ public class GeneratorException extends Exception {
         super(message);
         this.CodeError = CodeError;
     }
+    public GeneratorException(String message){
+        super(message);
+        CodeError = 0;
+    }
 }

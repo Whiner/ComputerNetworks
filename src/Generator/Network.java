@@ -45,7 +45,7 @@ public class Network {
         Nodes.add(new Node(Type, CellNumber_X, CellNumber_Y, 0));
 
     }
-    public boolean AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws Exception {
+    public boolean AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws GeneratorException {
         if(Nodes.isEmpty())
             throw new GeneratorException("You must create parent node firstly", 102);
         if(direction == Direction.None)
