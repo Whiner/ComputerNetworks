@@ -24,6 +24,7 @@ public class Node {
     }
 
 
+
     public void ConnectNode(Node node, Direction direction) throws GeneratorException {
         if(node == null)
             throw new GeneratorException("Node is null pointer", 200);
@@ -38,17 +39,13 @@ public class Node {
             ConnectedNodes.add(nodeNavigation);
             RelationsCount++;
         }
-        //try{
+
         nodeNavigation = new NodeNavigation(this, direction.reverse());
         if(!node.ConnectedNodes.contains(nodeNavigation))
         {
             node.ConnectedNodes.add(nodeNavigation);
             node.RelationsCount++;
         }
-            //System.out.println("not null");
-        //} catch(NullPointerException e){
-           // System.out.println(e.getMessage());
-        //}
 
 
     }

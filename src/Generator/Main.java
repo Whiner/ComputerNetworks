@@ -12,22 +12,24 @@ public class Main {
 
         Field.GetInstance().setCells_Count(10);
         Field.GetInstance().setSizeBorderInPx(1000);
-        Field.GetInstance().setLAN_Field_Count(2);
+        Field.GetInstance().AddWAN_Section();
+        Field.GetInstance().AddLAN_Section(2);
         Topology t = new Topology();
 
         try {
-            TopologyGenerator.GenerateWAN(t, 6,3);
+            t.AddNetwork(TopologyGenerator.GenerateWAN(6,3));
         } catch (GeneratorException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
         List<Network> networks = t.getNetworks();
-       /* for (Network _t: networks){
+        for (Network _t: networks){
             System.out.println("Сеть " + _t.getType());
             List<Node> nodes = _t.getNodes();
             for (Node _tt: nodes){
-                System.out.println("ID узла: " + _tt.getID());
+                System.out.println("----------------------------");
+                System.out.println("ID узла: " + _tt.getID() + " \nX = " + _tt.getCellNumber_X() + " Y = " + _tt.getCellNumber_Y());
                 System.out.println("Соединения: ");
                 for (NodeNavigation _ttt: _tt.getConnectedNodes()){
                     System.out.print(_ttt.getNode().getID() + " ");
@@ -35,7 +37,7 @@ public class Main {
                 System.out.println();
             }
 
-        }*/
+        }
 
     }
 }

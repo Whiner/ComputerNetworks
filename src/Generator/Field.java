@@ -36,19 +36,24 @@ public class Field {
                 Cells_Count, Cells_Count / 2);
         return true;
     }
-    public boolean AddLAN_Section(){
+    public boolean AddLAN_Section(int count){
         if(LAN_Sections == null)
             LAN_Sections = new ArrayList<>();
         if(LAN_Sections.size() >= MaxSectionsCount)
             return false;
-        LAN_Sections.add(new Section("" + LAN_Sections.size() + 1,
-                NetworkType.LAN,
-                SizeBorderInPx - SizeBorderInPx / (LAN_Sections.size() + 1),
-                SizeBorderInPx / 2,
-                SizeBorderInPx / (LAN_Sections.size() + 1),
-                SizeBorderInPx / 2,
-                Cells_Count / (LAN_Sections.size() + 1),
-                Cells_Count / 2));
+        if(LAN_Sections.size() + count > MaxSectionsCount)
+            count = MaxSectionsCount;
+        for (int i = 0; i < count; i++){
+            LAN_Sections.add(new Section("" + LAN_Sections.size() + i + 1,
+                    NetworkType.LAN,
+                    SizeBorderInPx - SizeBorderInPx / count,
+                    SizeBorderInPx / 2,
+                    SizeBorderInPx / count,
+                    SizeBorderInPx / 2,
+                    Cells_Count / count,
+                    Cells_Count / 2));
+        }
+
         return true;
     }
 
