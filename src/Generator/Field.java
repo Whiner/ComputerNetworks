@@ -32,33 +32,44 @@ public class Field {
     public boolean AddWAN_Section(){
         if(WAN_Section != null)
             return false;
-        WAN_Section = new Section("", NetworkType.WAN, 0, 0, SizeBorderInPx, SizeBorderInPx / 2,
-                Cells_Count, Cells_Count / 2);
+        WAN_Section = new Section("",
+                NetworkType.WAN,
+                0,
+                0,
+                Cells_Count,
+                Cells_Count / 2);
         return true;
     }
-    public boolean AddLAN_Section(int count){
-        if(LAN_Sections == null)
-            LAN_Sections = new ArrayList<>();
-        if(LAN_Sections.size() >= MaxSectionsCount)
+
+    public boolean CreateLAN_Sections(int count){
+        if(LAN_Sections != null)
             return false;
-        if(LAN_Sections.size() + count > MaxSectionsCount)
+
+        if(count > MaxSectionsCount && MaxSectionsCount != -1)
             count = MaxSectionsCount;
+
+        LAN_Sections = new ArrayList<>();
         for (int i = 0; i < count; i++){
-            LAN_Sections.add(new Section("" + LAN_Sections.size() + i + 1,
+            LAN_Sections.add(new Section(
+                    "" + (LAN_Sections.size() + i + 1),
                     NetworkType.LAN,
-                    SizeBorderInPx - SizeBorderInPx / count,
-                    SizeBorderInPx / 2,
-                    SizeBorderInPx / count,
-                    SizeBorderInPx / 2,
+                    (Cells_Count / count) * i,
+                    Cells_Count / 2 ,
                     Cells_Count / count,
-                    Cells_Count / 2));
+                    Cells_Count / 2
+                    ));
         }
 
         return true;
     }
 
-
-
+    public void Delete_LAN_Sections(){ //индикатор успеха надо
+        LAN_Sections.clear();
+        LAN_Sections = null;
+    }
+    public void Delete_WAN_Section(){ //индикатор успеха надо
+        WAN_Section = null;
+    }
     public int getCells_Count() {
         return Cells_Count;
     }
@@ -98,6 +109,7 @@ public class Field {
     public static Field GetInstance(){
         if (instance == null) {
             instance = new Field();
+            instance.MaxSectionsCount = -1;
         }
         return instance;
     }
@@ -106,4 +118,7 @@ public class Field {
     private Field() {}
 
 
+    public void setMaxSectionsCount(int maxSectionsCount) {
+        MaxSectionsCount = maxSectionsCount;
+    }
 }

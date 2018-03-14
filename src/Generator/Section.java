@@ -3,19 +3,49 @@ package Generator;
 public class Section {
 
     private String Name;
+    private boolean fill;
     private NetworkType Type;
-    private int x, y;
-    private int width, height;
+    private int BeginCell_X, BeginCell_Y;
     private int Cells_Count_X;
     private int Cells_Count_Y;
 
-    public Section(String name, NetworkType type, int x, int y, int width, int height, int cells_Count_X, int cells_Count_Y) {
+    public int getBeginCell_X() {
+        return BeginCell_X;
+    }
+
+    public void setBeginCell_X(int beginCell_X) {
+        BeginCell_X = beginCell_X;
+    }
+
+    public int getBeginCell_Y() {
+        return BeginCell_Y;
+    }
+
+    public void setBeginCell_Y(int beginCell_Y) {
+        BeginCell_Y = beginCell_Y;
+    }
+
+    public int getCells_Count_X() {
+        return Cells_Count_X;
+    }
+
+    public void setCells_Count_X(int cells_Count_X) {
+        Cells_Count_X = cells_Count_X;
+    }
+
+    public int getCells_Count_Y() {
+        return Cells_Count_Y;
+    }
+
+    public void setCells_Count_Y(int cells_Count_Y) {
+        Cells_Count_Y = cells_Count_Y;
+    }
+
+    public Section(String name, NetworkType type, int beginCell_X, int beginCell_Y, int cells_Count_X, int cells_Count_Y) {
         Name = name;
         Type = type;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        BeginCell_X = beginCell_X;
+        BeginCell_Y = beginCell_Y;
         Cells_Count_X = cells_Count_X;
         Cells_Count_Y = cells_Count_Y;
     }
@@ -28,37 +58,12 @@ public class Section {
         Name = name;
     }
 
-    public int getX() {
-        return x;
+
+    public boolean isFill() {
+        return fill;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setFill() {
+        this.fill = true;
     }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-
 }
