@@ -1,6 +1,5 @@
 package Generator;
 
-import java.lang.annotation.Documented;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +8,10 @@ public class Network {
     private NetworkType Type;
     private List<Node> Nodes;
     private int MaxNodeCount;
-
-    public void setMaxNodeRelations(int maxNodeRelations){
+    public Node GetLastNode(){
+        return Nodes.get(Nodes.size() - 1);
+    }
+    public void setMaxNodeRelations(int maxNodeRelations) throws GeneratorException {
         for(Node t: Nodes){
             t.setMaxRelationsCount(maxNodeRelations);
         }
@@ -44,22 +45,29 @@ public class Network {
                 return t;
          return null;
     }
+    public boolean isAllHaveMaxRelations(){
+        for (Node t: Nodes){
+            if(t.getRelationsCount() < t.getMaxRelationsCount())
+                return false;
+        }
+        return true;
+    }
 
-    public boolean CheckIntersection(Node from, Node to){
+    public boolean CheckIntersection(Node from, Node to){ //check
         int t_x = Math.abs(from.getCellNumber_X() - to.getCellNumber_X());
         int t_y = Math.abs(from.getCellNumber_Y() - to.getCellNumber_Y());
-        if(from.getCellNumber_X() == to.getCellNumber_X()){
+        if(t_x == 0){
             int start = Math.min(from.getCellNumber_Y(), to.getCellNumber_Y());
-            for (int i = 0; i < t_y; i++){
+            for (int i = 1; i < t_y; i++){
                 if(GetByCoord(from.getCellNumber_X(), start + i) != null)
                     return true;
             }
             return false;
         }
         else
-            if(from.getCellNumber_Y() == to.getCellNumber_Y()){
+            if(t_y == 0){
             int start = Math.min(from.getCellNumber_X(), to.getCellNumber_X());
-            for (int i = 0; i < t_x; i++){
+            for (int i = 1; i < t_x; i++){
                 if(GetByCoord(start + i, from.getCellNumber_Y()) != null)
                     return true;
             }
@@ -68,7 +76,7 @@ public class Network {
         else
             if(t_x == t_y) {
                 int start = Math.min(from.getCellNumber_X(), to.getCellNumber_X());
-                for (int i = 0; i < t_x; i++){
+                for (int i = 1; i < t_x; i++){
                     if(GetByCoord(start + i, start + i) != null)
                         return true;
                 }
@@ -89,12 +97,12 @@ public class Network {
     }
 
     /**между соедияемыми не должно быть других узлов. Иначе соединение проигнорируется*/
-    public boolean AddNode(Direction direction, int ParentNodeID, int ... ConnectWith) throws GeneratorException {
+    public boolean AddNode(Direction direction, int ParentNodeID, List<Integer> ConnectWith) throws GeneratorException {
         if(Nodes.isEmpty())
             throw new GeneratorException("You must create parent node firstly", 102);
         if(direction == Direction.None)
             throw new GeneratorException("Node must have direction", 103);
-        if(Nodes.size() + 1 > MaxNodeCount && MaxNodeCount != -1)
+        if(Nodes.size() + 1 > MaxNodeCount)
             throw new GeneratorException("Max node counts", 104);
         if(!CheckID(ParentNodeID))
             throw new GeneratorException("Node with ID " + ParentNodeID + " are not exist in this network", 105);
@@ -123,19 +131,27 @@ public class Network {
         }
 
         Node LastAdded = Nodes.get(ID);
-        ParentNode.ConnectNode(LastAdded, direction);
-
-        for (int t: ConnectWith){
-            Node ConnectingNode = GetNodeByID(t);
-            if(ConnectingNode != null){
-                if(CheckIntersection(LastAdded, ConnectingNode))
-                    continue;
-                Direction t_direction = Direction.CheckDirection(LastAdded, ConnectingNode);
-                if(t_direction != null)
-                    LastAdded.ConnectNode(ConnectingNode, t_direction);
+        try {
+            ParentNode.ConnectNode(LastAdded, direction);
+        }
+        catch (GeneratorException e){
+            if(e.getCodeError() == 202){
+                Nodes.remove(LastAdded);
             }
+            throw e;
         }
 
+        if(ConnectWith != null)
+            for (int t: ConnectWith){
+                Node ConnectingNode = GetNodeByID(t);
+                if(ConnectingNode != null){
+                    if(CheckIntersection(LastAdded, ConnectingNode))
+                        continue;
+                    Direction t_direction = Direction.CheckDirection(LastAdded, ConnectingNode);
+                    if(t_direction != null)
+                        LastAdded.ConnectNode(ConnectingNode, t_direction);
+                }
+            }
 
         return NewNode;
     }
@@ -147,7 +163,7 @@ public class Network {
 
     public Network() {
         Nodes = new ArrayList<>();
-        MaxNodeCount = -1;
+        MaxNodeCount = 8965545;
     }
 
     public Network(NetworkType type, int maxNodeCount) {

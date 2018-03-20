@@ -1,8 +1,6 @@
 package Generator;
 
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,40 +22,45 @@ public class TopologyGenerator {
         Random r = new Random();
         Network network = new Network();
         network.setType(Type);
-        try { // переделать под section
+
+        try {
             network.CreateParentNode( // создает родительский элемент
                     section.getBeginCell_X()
-                            + r.nextInt(section.getBeginCell_X() + section.getCells_Count_X()),
+                            + r.nextInt(section.getCells_Count_X()),
                     section.getBeginCell_Y());
+            network.getNodes().get(network.getNodes().size() - 1).setMaxRelationsCount(MaxNodeRelationsCount);
         } catch (Exception e){
             throw new GeneratorException("Generate falled with message: \n" + e.getMessage(), 303);
         }
-
         for (int i = 0; i < t_NodeCount - 1; i++){ // генерация остальных
-            int ConnectCount;
-            if (i == 0)
-                ConnectCount = 0;
-            else{
-                int MaxRel;
-                if(i < MaxNodeRelationsCount)  //до того как будет достаточно узлов для максимального количества связей будет i
-                    MaxRel = i;
-                else
-                    MaxRel = MaxNodeRelationsCount - 1;
-                ConnectCount = r.nextInt(MaxRel);
-            }
-
+            if(network.isAllHaveMaxRelations())
+                break;
+            int Additionally_Connect_Count;
+            if(i < MaxNodeRelationsCount)  //до того как будет достаточно узлов для максимального количества связей будет i
+                Additionally_Connect_Count = r.nextInt(i + 1);
+            else
+                Additionally_Connect_Count = r.nextInt(MaxNodeRelationsCount);
             Direction t_direction = Direction.RandomDirection();  // направление
             int ParentID = r.nextInt(i + 1); //рандомный родительский узел
-
             Node P_Node = network.GetNodeByID(ParentID);
             if(P_Node != null) {
-                int X = Direction.Check_X_by_Direction(P_Node, t_direction); // check this
+                if(P_Node.getMaxRelationsCount() <= P_Node.getRelationsCount())
+                {
+                    i--;
+                    continue;
+                }
+                int X = Direction.Check_X_by_Direction(P_Node, t_direction);
                 int Y = Direction.Check_Y_by_Direction(P_Node, t_direction);
-
                 if(X > section.getBeginCell_X() + section.getCells_Count_X() ||
                         X < section.getBeginCell_X() ||
                         Y > section.getBeginCell_Y() + section.getCells_Count_Y() ||
                         Y < section.getBeginCell_Y())
+                {
+                    i--;
+                    continue;
+                }
+                Node N_By_Coord = network.GetByCoord(X, Y);
+                if(N_By_Coord != null)
                 {
                     i--;
                     continue;
@@ -69,55 +72,31 @@ public class TopologyGenerator {
                 continue;
             }
 
-            List<Integer> ConnectID = new ArrayList<>(); //с какими соединить еще
+            List<Integer> Additionally_Connect_ID = new ArrayList<>(); //с какими соединить еще
             int RandomConnectNode;
-            if(i != 0 && ConnectCount != 0)
+            if(i != 0 && Additionally_Connect_Count != 0)
             {
-                for (int j = 0; j < ConnectCount; j++) {
+                for (int j = 0; j < Additionally_Connect_Count; j++) {
                     do {
                         RandomConnectNode = r.nextInt(i + 1);
-                    } while (RandomConnectNode == ParentID || ConnectID.contains(RandomConnectNode));
-                    ConnectID.add(RandomConnectNode);
+                    } while (RandomConnectNode == ParentID || Additionally_Connect_ID.contains(RandomConnectNode));
+                    Additionally_Connect_ID.add(RandomConnectNode);
                 }
 
             }
             boolean NewNode;
             try {
-                switch (ConnectCount) {
-                    case 0:
-                        NewNode = network.AddNode(t_direction, ParentID);
-                        break;
-                    case 1:
-                        NewNode = network.AddNode(t_direction, ParentID, ConnectID.get(0));
-                        break;
-                    case 2:
-                        NewNode = network.AddNode(t_direction, ParentID,
-                                ConnectID.get(0),
-                                ConnectID.get(1));
-                        break;
-                    case 3:
-                        NewNode = network.AddNode(t_direction, ParentID,
-                                ConnectID.get(0),
-                                ConnectID.get(1),
-                                ConnectID.get(2));
-                        break;
-                    case 4:
-                        NewNode = network.AddNode(t_direction, ParentID,
-                                ConnectID.get(0),
-                                ConnectID.get(1),
-                                ConnectID.get(2),
-                                ConnectID.get(3));
-                        break;
-                    default:
-                        throw new GeneratorException("Unknown error", 666);
-                }
+                NewNode = network.AddNode(t_direction, ParentID, Additionally_Connect_ID);
                 if(!NewNode)
                 {
                     i--;
                     continue;
                 }
+                network.GetLastNode().setMaxRelationsCount(MaxNodeRelationsCount);
             }
             catch (GeneratorException e){
+                //if(e.getCodeError() == 104)
+                //    continue;
                 if(e.getCodeError() == 106)
                     i--;
                 else
@@ -126,7 +105,7 @@ public class TopologyGenerator {
                 e.printStackTrace();
             }
         }
-        network.setMaxNodeRelations(MaxNodeRelationsCount);
+
         section.setFill();
         return network;
 

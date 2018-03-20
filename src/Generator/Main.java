@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-public class Main {
+//бывает максимальное количество узлов еще не добавлено, а все связи уже заполнены. че делать?
+public class Main { //сделать чтобы высота WAN секции рассчитывалась в зависимости от количества узлов в WAN
     public static void main(String[] args) {
 
 
@@ -14,14 +14,14 @@ public class Main {
         Field.GetInstance().setSizeBorderInPx(1000);
         Field.GetInstance().setMaxSectionsCount(3);
         Field.GetInstance().AddWAN_Section();
-        Field.GetInstance().CreateLAN_Sections(2);
+        Field.GetInstance().CreateLAN_Sections(1);
 
         Topology t = new Topology();
 
         try {
             t.AddNetwork(TopologyGenerator.GenerateWAN(2,3));
-            t.AddNetwork(TopologyGenerator.GenerateLAN(8, 4));
-            t.AddNetwork(TopologyGenerator.GenerateLAN(8, 4));
+            t.AddNetwork(TopologyGenerator.GenerateLAN(10, 4));
+            //t.AddNetwork(TopologyGenerator.GenerateLAN(5, 2));
         } catch (GeneratorException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {

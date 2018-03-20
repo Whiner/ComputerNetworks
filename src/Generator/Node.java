@@ -19,7 +19,7 @@ public class Node {
         CellNumber_Y = cellNumber_Y;
         this.ID = ID;
         ConnectedNodes = new ArrayList<>();
-        MaxRelationsCount = -1;
+        MaxRelationsCount = 88888888;
         RelationsCount = 0;
     }
 
@@ -30,8 +30,8 @@ public class Node {
             throw new GeneratorException("Node is null pointer", 200);
         if(node.equals(this))
             throw new GeneratorException("Comparison of oneself node", 201);
-        if(this.MaxRelationsCount < RelationsCount && this.MaxRelationsCount != -1
-                || node.MaxRelationsCount < node.RelationsCount && node.MaxRelationsCount != -1)
+        if(this.MaxRelationsCount <= RelationsCount
+                || node.MaxRelationsCount <= node.RelationsCount)
             throw new GeneratorException("Max relations count", 202);
         NodeNavigation nodeNavigation = new NodeNavigation(node, direction);
         if(!ConnectedNodes.contains(nodeNavigation))
@@ -72,7 +72,7 @@ public class Node {
     public Node() {
         ConnectedNodes = new ArrayList<>();
         RelationsCount = 0;
-        MaxRelationsCount = -1;
+        MaxRelationsCount = 8888888;
     }
 
     public Node(NetworkType networkType, int ID) {
@@ -80,7 +80,7 @@ public class Node {
         this.networkType = networkType;
         this.ID = ID;
         this.RelationsCount = 0;
-        MaxRelationsCount = -1;
+        MaxRelationsCount = 8888888;
     }
 
     public Node(NetworkType networkType, List<NodeNavigation> connectedNodes, int coord_x, int coord_y, int size, int ID) throws Exception {
@@ -95,7 +95,7 @@ public class Node {
             throw new GeneratorException("Size must be greater than 0", 206);
         Size = size;
         this.ID = ID;
-        MaxRelationsCount = -1;
+        MaxRelationsCount = 8888888;
     }
 
     public int getID() {
@@ -163,7 +163,9 @@ public class Node {
         return MaxRelationsCount;
     }
 
-    public void setMaxRelationsCount(int maxRelationsCount) {
+    public void setMaxRelationsCount(int maxRelationsCount) throws GeneratorException {
+        if(maxRelationsCount < 0)
+            throw new GeneratorException("Max relation count less than 0");
         MaxRelationsCount = maxRelationsCount;
     }
 }

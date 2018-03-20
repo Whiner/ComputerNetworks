@@ -10,7 +10,9 @@ public class GeneratorException extends Exception {
     public String getMessage() {
         return "Code: " + CodeError + "\nMessage: " + super.getMessage();
     }
-
+    public String GetText(){
+        return super.getMessage();
+    }
     public GeneratorException(String message, int CodeError){
         super(message);
         this.CodeError = CodeError;
